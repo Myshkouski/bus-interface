@@ -1,0 +1,20 @@
+{
+	"devDependencies": {
+		"@babel/core": "^7.2.0",
+		"@babel/preset-typescript": "^7.1.0",
+		"babel-preset-espruino": "github:Myshkouski/babel-preset-espruino",
+		"rimraf": "^2.6.2",
+		"rollup": "^0.67.4",
+		"rollup-plugin-babel": "^4.0.3",
+		"rollup-plugin-commonjs": "^9.2.0",
+		"rollup-plugin-node-resolve": "^4.0.0"
+	},
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"name": "@alexeimyshkouski/espruino-bus",
+	"scripts": {
+		"prebuild": "rimraf dist",
+		"build": "rollup -c",
+		"build:dev": "npm run build -- -w"
+	}
+}
