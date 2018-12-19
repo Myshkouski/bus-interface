@@ -33,10 +33,7 @@ function consume(watcher, chunk) {
           break;
         }
       } else {
-        const error = new MatchError();
-        error.watcher = watcher;
-        error.expected = chunk[chunkIndex];
-        throw error;
+        throw chunkIndex;
       }
     }
   }
@@ -78,15 +75,9 @@ function create(pattern, callback) {
   return reset(watcher);
 }
 
-// 	constructor() {
-// 		super('Unexpected incoming data')
-// 	}
-// }
-
 /**
  * @class Watcher
  */
-
 
 class Bus extends Duplex {
   constructor() {
@@ -155,8 +146,6 @@ class Bus extends Duplex {
   }
 
   reset() {
-    this._watchers.splice(0, this._watchers.length);
-
     this._watchers.splice(0, this._watchers.length);
 
     return this;

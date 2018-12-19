@@ -1,20 +1,7 @@
 import {
 	Duplex
 } from 'stream'
-
 import * as Watcher from './watcher'
-
-class MatchError extends Error {
-	constructor() {
-		super('Not match')
-	}
-}
-
-// class UnexpectedDataError extends Error {
-// 	constructor() {
-// 		super('Unexpected incoming data')
-// 	}
-// }
 
 /**
  * @class Watcher
@@ -90,7 +77,6 @@ class Bus extends Duplex {
 	}
 
 	reset() {
-		this._watchers.splice(0, this._watchers.length)
 		this._watchers.splice(0, this._watchers.length)
 		return this
 	}

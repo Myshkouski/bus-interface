@@ -32,10 +32,7 @@ export function consume(watcher: Watcher, chunk: Data): boolean {
                     break
                 }
             } else {
-                const error = new MatchError()
-                error.watcher = watcher
-                error.expected = chunk[chunkIndex]
-                throw error
+                throw chunkIndex
             }
         }
     }

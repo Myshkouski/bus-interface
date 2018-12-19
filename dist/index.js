@@ -1,6 +1,6 @@
 'use strict';
 
-var stream = require('stream');
+var myshkouski_espruino_modules_stream = require('@bit/myshkouski.espruino.modules.stream');
 
 function reset(watcher) {
   watcher.match = watcher.pattern.slice(0);
@@ -35,10 +35,7 @@ function consume(watcher, chunk) {
           break;
         }
       } else {
-        var error = new MatchError();
-        error.watcher = watcher;
-        error.expected = chunk[chunkIndex];
-        throw error;
+        throw chunkIndex;
       }
     }
   }
@@ -80,17 +77,11 @@ function create(pattern, callback) {
   return reset(watcher);
 }
 
-// 	constructor() {
-// 		super('Unexpected incoming data')
-// 	}
-// }
-
 /**
  * @class Watcher
  */
 
-
-class Bus extends stream.Duplex {
+class Bus extends myshkouski_espruino_modules_stream.Duplex {
   constructor() {
     super();
     this._watchers = [];
@@ -157,8 +148,6 @@ class Bus extends stream.Duplex {
   }
 
   reset() {
-    this._watchers.splice(0, this._watchers.length);
-
     this._watchers.splice(0, this._watchers.length);
 
     return this;

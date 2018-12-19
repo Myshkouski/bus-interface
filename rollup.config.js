@@ -15,6 +15,9 @@ const basePlugins = [
 	}),
 	commonjs()
 ]
+const babelBasePresets = [
+	'@babel/preset-typescript'
+]
 
 export default [{
 	input,
@@ -28,7 +31,7 @@ export default [{
 		babel({
 			extensions,
 			presets: [
-				'@babel/preset-typescript'
+				...babelBasePresets
 			]
 		})
 	]
@@ -45,7 +48,7 @@ export default [{
 			extensions,
 			presets: [
 				'babel-preset-espruino',
-				'@babel/preset-typescript'
+				...babelBasePresets
 			]
 		})
 	]
