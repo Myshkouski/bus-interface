@@ -7,7 +7,7 @@ const __src = path.resolve('src')
 const __dist = path.resolve('dist')
 
 const input = path.resolve(__src, 'index.ts')
-const extensions = ['.mjs', '.js', '.ts']
+const extensions = ['.js', '.ts']
 const external = id => !id.startsWith('.') && !id.startsWith(path.sep) && !~id.indexOf(__src)
 const basePlugins = [
 	resolve({
@@ -24,7 +24,7 @@ export default [{
 	external,
 	output: {
 		format: 'esm',
-		file: path.resolve(__dist, 'index.mjs')
+		file: path.resolve(__dist, 'index.esm.js')
 	},
 	plugins: [
 		...basePlugins,
