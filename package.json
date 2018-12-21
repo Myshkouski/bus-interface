@@ -16,10 +16,11 @@
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "rollup -c",
-		"build:dev": "npm run build -- -w"
+		"build:dev": "npm run build -- -w",
+		"test": "node test"
 	},
 	"version": "0.0.1",
 	"dependencies": {
-		"@bit/myshkouski.espruino.modules.stream": "0.0.1"
+		"@bit/myshkouski.espruino.modules.stream": "0.0.4"
 	}
 }

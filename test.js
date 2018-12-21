@@ -1,4 +1,4 @@
-const Bus = require('.')
+const Bus = require('./dist/index.node')
 const {
   Duplex,
   Readable,

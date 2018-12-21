@@ -22,10 +22,13 @@ const babelBasePresets = [
 export default [{
 	input,
 	external,
-	output: {
+	output: [{
 		format: 'esm',
 		file: path.resolve(__dist, 'index.esm.js')
-	},
+	}, {
+		format: 'cjs',
+		file: path.resolve(__dist, 'index.node.js')
+	}],
 	plugins: [
 		...basePlugins,
 		babel({
