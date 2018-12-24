@@ -10,7 +10,7 @@
 		"rollup-plugin-node-resolve": "^4.0.0"
 	},
 	"main": "dist/index.js",
-	"module": "dist/index.mjs",
+	"module": "dist/index.esm.js",
 	"name": "@alexeimyshkouski/bus-interface",
 	"scripts": {
 		"prebuild": "rimraf dist",
