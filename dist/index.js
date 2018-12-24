@@ -1,6 +1,6 @@
 'use strict';
 
-var myshkouski_espruino_modules_stream = require('@bit/myshkouski.espruino.modules.stream');
+var stream = require('stream');
 
 function reset(watcher) {
   watcher.match = watcher.pattern.slice(0);
@@ -8,10 +8,10 @@ function reset(watcher) {
   return watcher;
 }
 function consume(watcher, chunk) {
-  var resolved = false;
+  let resolved = false;
 
-  for (var chunkIndex = 0; chunkIndex < chunk.length; chunkIndex++) {
-    var expected = watcher.match[watcher.matchIndex];
+  for (let chunkIndex = 0; chunkIndex < chunk.length; chunkIndex++) {
+    let expected = watcher.match[watcher.matchIndex];
 
     if (expected instanceof Function) {
       expected = expected.call(undefined, chunk[chunkIndex], watcher.matchIndex, watcher.match.slice(0, watcher.matchIndex));
@@ -47,10 +47,10 @@ function consume(watcher, chunk) {
   return resolved;
 }
 function toConsumable(pattern) {
-  var consumablePattern = [];
+  let consumablePattern = [];
 
-  for (var index = 0; index < pattern.length; index++) {
-    var sample = pattern[index];
+  for (let index = 0; index < pattern.length; index++) {
+    const sample = pattern[index];
 
     if (Array.isArray(sample)) {
       consumablePattern = consumablePattern.concat(sample);
@@ -59,20 +59,20 @@ function toConsumable(pattern) {
     }
   }
 
-  for (var _index in consumablePattern) {
-    var _sample = consumablePattern[_index];
+  for (let index in consumablePattern) {
+    const sample = consumablePattern[index];
 
-    if (!(!isNaN(_sample) || _sample instanceof Function || _sample === undefined)) {
-      throw new TypeError('Cannot create pattern with "' + typeof _sample + '" sample type');
+    if (!(!isNaN(sample) || sample instanceof Function || sample === undefined)) {
+      throw new TypeError('Cannot create pattern with "' + typeof sample + '" sample type');
     }
   }
 
   return consumablePattern;
 }
 function create(pattern, callback) {
-  var watcher = {
+  const watcher = {
     pattern: toConsumable(pattern),
-    callback: callback
+    callback
   };
   return reset(watcher);
 }
@@ -81,7 +81,7 @@ function create(pattern, callback) {
  * @class Watcher
  */
 
-class Bus extends myshkouski_espruino_modules_stream.Duplex {
+class Bus extends stream.Duplex {
   constructor() {
     super();
     this._watchers = [];
@@ -94,11 +94,11 @@ class Bus extends myshkouski_espruino_modules_stream.Duplex {
   }
 
   _write(chunk, encoding, cb) {
-    var consumed = false;
+    let consumed = false;
 
-    for (var watcherIndex = 0; watcherIndex < this._watchers.length;) {
-      var watcher = this._watchers[watcherIndex];
-      var resolved = void 0;
+    for (let watcherIndex = 0; watcherIndex < this._watchers.length;) {
+      let watcher = this._watchers[watcherIndex];
+      let resolved;
 
       try {
         resolved = consume(watcher, chunk);
@@ -121,8 +121,8 @@ class Bus extends myshkouski_espruino_modules_stream.Duplex {
   }
 
   subscribe(pattern, cb) {
-    var consumablePattern = toConsumable(pattern);
-    var watcher = create(consumablePattern, cb);
+    const consumablePattern = toConsumable(pattern);
+    const watcher = create(consumablePattern, cb);
 
     this._watchers.push(watcher);
 
@@ -130,7 +130,7 @@ class Bus extends myshkouski_espruino_modules_stream.Duplex {
   }
 
   unsubscribe(watcher) {
-    var index = this._watchers.indexOf(watcher);
+    const index = this._watchers.indexOf(watcher);
 
     if (~index) {
       this._watchers.splice(0, this._watchers.length);

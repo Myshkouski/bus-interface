@@ -3,7 +3,6 @@
 		"@babel/core": "^7.2.2",
 		"@babel/preset-typescript": "^7.1.0",
 		"@types/node": "^10.12.17",
-		"babel-preset-espruino": "0.0.2",
 		"rimraf": "^2.6.2",
 		"rollup": "^0.67.4",
 		"rollup-plugin-babel": "^4.1.0",
@@ -15,12 +14,10 @@
 	"name": "@alexeimyshkouski/bus-interface",
 	"scripts": {
 		"prebuild": "rimraf dist",
+		"prepublishOnly": "npm run build",
 		"build": "rollup -c",
 		"build:dev": "npm run build -- -w",
 		"test": "node test"
 	},
-	"version": "0.0.1",
-	"dependencies": {
-		"@bit/myshkouski.espruino.modules.stream": "0.0.4"
-	}
+	"version": "0.0.1"
 }

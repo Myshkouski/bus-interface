@@ -6,53 +6,28 @@ import resolve from 'rollup-plugin-node-resolve'
 const __src = path.resolve('src')
 const __dist = path.resolve('dist')
 
-const input = path.resolve(__src, 'index.ts')
 const extensions = ['.js', '.ts']
-const external = id => !id.startsWith('.') && !id.startsWith(path.sep) && !~id.indexOf(__src)
-const basePlugins = [
-	resolve({
-		extensions
-	}),
-	commonjs()
-]
-const babelBasePresets = [
-	'@babel/preset-typescript'
-]
 
-export default [{
-	input,
-	external,
+export default {
+	input: path.resolve(__src, 'index.ts'),
+	external: id => !id.startsWith('.') && !id.startsWith(path.sep) && !~id.indexOf(__src),
 	output: [{
 		format: 'esm',
 		file: path.resolve(__dist, 'index.esm.js')
 	}, {
 		format: 'cjs',
-		file: path.resolve(__dist, 'index.node.js')
+		file: path.resolve(__dist, 'index.js')
 	}],
 	plugins: [
-		...basePlugins,
+		resolve({
+			extensions
+		}),
+		commonjs(),
 		babel({
 			extensions,
 			presets: [
-				...babelBasePresets
+				'@babel/preset-typescript'
 			]
 		})
 	]
-}, {
-	input,
-	external,
-	output: {
-		format: 'cjs',
-		file: path.resolve(__dist, 'index.js')
-	},
-	plugins: [
-		...basePlugins,
-		babel({
-			extensions,
-			presets: [
-				'babel-preset-espruino',
-				...babelBasePresets
-			]
-		})
-	]
-}]
+}
