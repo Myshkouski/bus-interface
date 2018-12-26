@@ -1,6 +1,6 @@
 import {
 	Duplex
-} from 'D:\\myshkovskii\\Dev\\espruino\\modules\\stream'
+} from 'stream'
 import * as Watcher from './watcher'
 
 class Bus extends Duplex {
@@ -69,6 +69,7 @@ class Bus extends Duplex {
 
 	expect(pattern: Pattern, cb?: Function) {
 		return this.subscribe(pattern, (match, watcher) => {
+			cb && cb.call(watcher, match, watcher)
 			this.unsubscribe(watcher)
 		})
 	}

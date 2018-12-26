@@ -1,6 +1,6 @@
 'use strict';
 
-var stream = require('../../espruino/modules/stream');
+var stream = require('stream');
 
 function reset(watcher) {
   watcher.match = watcher.pattern.slice(0);
@@ -128,6 +128,7 @@ class Bus extends stream.Duplex {
 
   expect(pattern, cb) {
     return this.subscribe(pattern, (match, watcher) => {
+      cb && cb.call(watcher, match, watcher);
       this.unsubscribe(watcher);
     });
   }

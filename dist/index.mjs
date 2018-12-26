@@ -1,4 +1,4 @@
-import { Duplex } from '../../espruino/modules/stream';
+import { Duplex } from 'stream';
 
 function reset(watcher) {
   watcher.match = watcher.pattern.slice(0);
@@ -126,6 +126,7 @@ class Bus extends Duplex {
 
   expect(pattern, cb) {
     return this.subscribe(pattern, (match, watcher) => {
+      cb && cb.call(watcher, match, watcher);
       this.unsubscribe(watcher);
     });
   }

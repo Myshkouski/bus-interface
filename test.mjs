@@ -1,5 +1,5 @@
 import Bus from '.'
-import stream from '../espruino/modules/stream'
+import stream from 'stream'
 
 const {
   Duplex,
