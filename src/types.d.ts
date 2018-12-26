@@ -1,4 +1,4 @@
-type RawData = Buffer|ArrayBuffer
+type RawData = Buffer|Uint8Array
 type Data = RawData|string
 type ConsumableSample = number|Function
 type Sample = ConsumableSample|Data

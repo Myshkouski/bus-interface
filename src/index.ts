@@ -1,11 +1,8 @@
 import {
 	Duplex
-} from 'stream'
+} from 'D:\\myshkovskii\\Dev\\espruino\\modules\\stream'
 import * as Watcher from './watcher'
 
-/**
- * @class Watcher
- */
 class Bus extends Duplex {
 	private _watchers: Array<Watcher>
 

@@ -1,9 +1,11 @@
-const Bus = require('./dist/index.node')
+import Bus from '.'
+import stream from '../espruino/modules/stream'
+
 const {
   Duplex,
   Readable,
   Writable
-} = require('stream')
+} = stream
 
 const bus = new Bus()
 

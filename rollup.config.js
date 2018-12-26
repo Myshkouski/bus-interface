@@ -13,7 +13,7 @@ export default {
 	external: id => !id.startsWith('.') && !id.startsWith(path.sep) && !~id.indexOf(__src),
 	output: [{
 		format: 'esm',
-		file: path.resolve(__dist, 'index.esm.js')
+		file: path.resolve(__dist, 'index.mjs')
 	}, {
 		format: 'cjs',
 		file: path.resolve(__dist, 'index.js')

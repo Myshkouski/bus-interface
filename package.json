@@ -9,15 +9,15 @@
 		"rollup-plugin-commonjs": "^9.2.0",
 		"rollup-plugin-node-resolve": "^4.0.0"
 	},
-	"main": "dist/index.js",
-	"module": "dist/index.esm.js",
+	"main": "dist/index",
+	"module": "src/index",
 	"name": "@alexeimyshkouski/bus-interface",
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"prepublishOnly": "npm run build",
 		"build": "rollup -c",
 		"build:dev": "npm run build -- -w",
-		"test": "node test"
+		"test": "node --experimental-modules test"
 	},
 	"version": "0.0.1"
 }

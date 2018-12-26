@@ -5,8 +5,6 @@ export function reset(watcher: WatcherBase): Watcher {
 }
 
 export function consume(watcher: Watcher, chunk: Data): boolean {
-    let resolved = false
-
     for (let chunkIndex = 0; chunkIndex < chunk.length; chunkIndex++) {
         let expected = watcher.match[watcher.matchIndex]
 
@@ -20,28 +18,19 @@ export function consume(watcher: Watcher, chunk: Data): boolean {
         }
 
         if (watcher.matchIndex < watcher.match.length) {
-            if (!expected) {
+            if (!expected || expected === chunk[chunkIndex]) {
                 watcher.match[watcher.matchIndex] = chunk[chunkIndex]
-            }
-
-            if (expected === chunk[chunkIndex]) {
                 watcher.matchIndex++
 
                 if (watcher.matchIndex === watcher.match.length) {
-                    resolved = true
-                    break
+                    watcher.callback && setImmediate(watcher.callback.bind(watcher, watcher.match, watcher))
+                    return true
                 }
             } else {
                 throw chunkIndex
             }
         }
     }
-
-    if (resolved && watcher.callback) {
-        watcher.callback.call(watcher, watcher.match, watcher)
-    }
-
-    return resolved
 }
 
 export function toConsumable(pattern: Pattern): ConsumablePattern {

@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from '../../espruino/modules/stream';
 
 function reset(watcher) {
   watcher.match = watcher.pattern.slice(0);
@@ -6,8 +6,6 @@ function reset(watcher) {
   return watcher;
 }
 function consume(watcher, chunk) {
-  let resolved = false;
-
   for (let chunkIndex = 0; chunkIndex < chunk.length; chunkIndex++) {
     let expected = watcher.match[watcher.matchIndex];
 
@@ -21,28 +19,19 @@ function consume(watcher, chunk) {
     }
 
     if (watcher.matchIndex < watcher.match.length) {
-      if (!expected) {
+      if (!expected || expected === chunk[chunkIndex]) {
         watcher.match[watcher.matchIndex] = chunk[chunkIndex];
-      }
-
-      if (expected === chunk[chunkIndex]) {
         watcher.matchIndex++;
 
         if (watcher.matchIndex === watcher.match.length) {
-          resolved = true;
-          break;
+          watcher.callback && setImmediate(watcher.callback.bind(watcher, watcher.match, watcher));
+          return true;
         }
       } else {
         throw chunkIndex;
       }
     }
   }
-
-  if (resolved && watcher.callback) {
-    watcher.callback.call(watcher, watcher.match, watcher);
-  }
-
-  return resolved;
 }
 function toConsumable(pattern) {
   let consumablePattern = [];
@@ -74,10 +63,6 @@ function create(pattern, callback) {
   };
   return reset(watcher);
 }
-
-/**
- * @class Watcher
- */
 
 class Bus extends Duplex {
   constructor() {
