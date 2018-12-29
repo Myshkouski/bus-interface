@@ -64,79 +64,79 @@ function create(pattern, callback) {
   return reset(watcher);
 }
 
-class Bus extends Duplex {
-  constructor() {
-    super();
-    this._watchers = [];
-  }
+function Bus() {
+  Duplex.call(this);
+  this._watchers = [];
+}
 
-  _read(size) {// for (let chunk = '', sent = 0, push = true; this._sending.length && push && sent <= size; sent += chunk.length) {
-    //   chunk = this._sending.shift()
-    //   push = this.push(chunk)
-    // }
-  }
+Bus.prototype = Object.create(Duplex.prototype);
+Bus.prototype.constructor = Bus;
 
-  _write(chunk, encoding, cb) {
-    let consumed = false;
+Bus.prototype._read = function _read(size) {// for (let chunk = '', sent = 0, push = true; this._sending.length && push && sent <= size; sent += chunk.length) {
+  //   chunk = this._sending.shift()
+  //   push = this.push(chunk)
+  // }
+};
 
-    for (let watcherIndex = 0; watcherIndex < this._watchers.length;) {
-      let watcher = this._watchers[watcherIndex];
-      let resolved;
+Bus.prototype._write = function _write(chunk, encoding, cb) {
+  let consumed = false;
 
-      try {
-        resolved = consume(watcher, chunk);
-        consumed = true;
-        watcherIndex++;
-      } catch (error) {
-        this._watchers.splice(watcherIndex, 1);
-      }
+  for (let watcherIndex = 0; watcherIndex < this._watchers.length;) {
+    let watcher = this._watchers[watcherIndex];
+    let resolved;
 
-      if (resolved) {
-        this.emit('frame', watcher.match);
-      }
+    try {
+      resolved = consume(watcher, chunk);
+      consumed = true;
+      watcherIndex++;
+    } catch (error) {
+      this._watchers.splice(watcherIndex, 1);
     }
 
-    if (!consumed) {
-      this.emit('error', new Error('Not consumed'));
+    if (resolved) {
+      this.emit('frame', watcher.match);
     }
-
-    cb();
   }
 
-  subscribe(pattern, cb) {
-    const consumablePattern = toConsumable(pattern);
-    const watcher = create(consumablePattern, cb);
-
-    this._watchers.push(watcher);
-
-    return watcher;
+  if (!consumed) {
+    this.emit('error', new Error('Not consumed'));
   }
 
-  unsubscribe(watcher) {
-    const index = this._watchers.indexOf(watcher);
+  cb();
+};
 
-    if (~index) {
-      this._watchers.splice(0, this._watchers.length);
+Bus.prototype.subscribe = function subscribe(pattern, cb) {
+  const consumablePattern = toConsumable(pattern);
+  const watcher = create(consumablePattern, cb);
 
-      return true;
-    }
+  this._watchers.push(watcher);
 
-    return false;
-  }
+  return watcher;
+};
 
-  expect(pattern, cb) {
-    return this.subscribe(pattern, (match, watcher) => {
-      cb && cb.call(watcher, match, watcher);
-      this.unsubscribe(watcher);
-    });
-  }
+Bus.prototype.unsubscribe = function unsubscribe(watcher) {
+  const index = this._watchers.indexOf(watcher);
 
-  reset() {
+  if (~index) {
     this._watchers.splice(0, this._watchers.length);
 
-    return this;
+    return true;
   }
 
-}
+  return false;
+};
+
+Bus.prototype.expect = function expect(pattern, cb) {
+  return this.subscribe(pattern, (match, watcher) => {
+    cb && cb.call(watcher, match, watcher);
+    this.unsubscribe(watcher);
+  });
+};
+
+Bus.prototype.reset = function reset$$1() {
+  this._watchers.splice(0, this._watchers.length);
+
+  return this;
+};
 
 export default Bus;
