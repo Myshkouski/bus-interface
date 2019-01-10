@@ -1,26 +1,13 @@
 {
 	"devDependencies": {
-		"@babel/core": "^7.2.2",
-		"@babel/preset-typescript": "^7.1.0",
 		"@types/node": "^10.12.17",
-		"rimraf": "^2.6.2",
-		"rollup": "^0.67.4",
-		"rollup-plugin-babel": "^4.1.0",
-		"rollup-plugin-commonjs": "^9.2.0",
-		"rollup-plugin-node-resolve": "^4.0.0"
+		"buffer-concat": "^1.0.0",
+		"buffer-from": "^1.1.1"
 	},
-	"main": "dist/index",
-	"module": "src/index",
+	"main": "bus.mjs",
 	"name": "@alexeimyshkouski/bus-interface",
 	"scripts": {
-		"prebuild": "rimraf dist",
-		"prepublishOnly": "npm run build",
-		"build": "rollup -c",
-		"build:dev": "npm run build -- -w",
 		"test": "node --experimental-modules test"
 	},
-	"version": "0.0.1",
-	"dependencies": {
-		"buffer-from": "^1.1.1"
-	}
+	"version": "0.0.2"
 }
