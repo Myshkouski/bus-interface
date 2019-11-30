@@ -30,12 +30,14 @@ Object.assign(Route.prototype, {
 	consume(chunk, encoding) {
 		let index = -1;
 		const _consume = (chunk, encoding) => {
+			let consumed = 0;
 			if (++index < this._filters.length) {
-				return this._filters[index](chunk, encoding, _consume)
+				consumed = this._filters[index](chunk, encoding, _consume);
+			} else {
+				this.emit('data', chunk);
 			}
 
-			this.emit('data', chunk);
-			return 0
+			return Promise.resolve(consumed)
 		};
 
 		return _consume(chunk, encoding)
