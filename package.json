@@ -1,10 +1,11 @@
 {
 	"devDependencies": {
 		"buffer-concat": "^1.0.0",
-		"buffer-from": "^1.1.1"
+		"buffer-from": "^1.1.1",
+		"rollup": "^1.27.5"
 	},
 	"module": "bus.mjs",
-	"name": "@alexeimyshkouski/bus-interface",
+	"name": "@alexeimyshkouski/bus",
 	"scripts": {
 		"test": "node --experimental-modules test.mjs"
 	},
