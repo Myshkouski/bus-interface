@@ -1,57 +1,62 @@
-function line(delimiter, options) {
-  if (typeof delimiter === 'object') {
-    delimiter = String.fromCharCode.apply(null, delimiter)
-  }
+// import bufferToString from 'arraybuffer-to-string'
+function bufferToString(buffer) {
+    return String.fromCharCode.apply(null, buffer)
+}
 
-  let limit = Infinity
-
-  if(options) {
-    if (options.limit < limit) {
-      limit = options.limit
-    }
-  }
-
-  let cache = ''
-
-  return function consume(chunk, options = {}, cb) {
-    let from = cache.length - delimiter.length * 2
-    if (from < 2) {
-      from = 0
-    }
-    let consumedChunkLength = 0
-    let index
-
-    if (typeof delimiter === 'object') {
-      chunk = String.fromCharCode.apply(null, chunk)
+function line(delimiter, options = {}) {
+    if (Buffer.isBuffer(delimiter)) {
+        // delimiter = String.fromCharCode.apply(null, delimiter)
+        delimiter = bufferToString(delimiter)
     }
 
-    cache += chunk
-    
-    while (cache) {
-      index = cache.indexOf(delimiter, from)
+    let limit = Infinity
 
-      if (!~index) {
-        break
-      }
-
-      const line = cache.slice(from, index)
-
-      consumedChunkLength += cache.length - index
-      from = index + delimiter.length
-
-      cb && process.nextTick(cb.bind(this, line))
-
-      if (options.once) {
-        cache = ''
-      }
+    if (options) {
+        if (options.limit < limit) {
+            limit = options.limit
+        }
     }
 
-    if (cache && from) {
-      cache = cache.slice(from)
-    }
+    let cache = ''
 
-    return consumedChunkLength
-  }
+    return function consume(chunk, encoding, cb) {
+        let from = cache.length - delimiter.length * 2
+        if (from < 2) {
+            from = 0
+        }
+        let consumedChunkLength = 0
+        let index
+
+        if (Buffer.isBuffer(chunk)) {
+            chunk = bufferToString(chunk)
+        }
+
+        cache += chunk
+
+        while (cache) {
+            index = cache.indexOf(delimiter, from)
+
+            if (!~index) {
+                break
+            }
+
+            const line = cache.slice(from, index)
+            consumedChunkLength += index + delimiter.length - from
+            from = index + delimiter.length
+
+            cb && process.nextTick(cb.bind(this, line))
+
+            if (options.once) {
+                cache = ''
+            }
+        }
+
+        if (cache && from) {
+            cache = cache.slice(from)
+        }
+
+        return consumedChunkLength
+    }
 }
 
 export default line

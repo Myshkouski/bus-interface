@@ -1,10 +1,46 @@
 import stream from 'stream'
+import { EventEmitter } from 'events'
+
+class Route extends stream.Duplex {
+	constructor() {
+		super()
+		this._filters = []
+	}
+
+	_read() {}
+
+	async _write(chunk, encoding, cb) {
+		try {
+			await this.consume(chunk, encoding, cb)
+		} catch(error) {
+			this.emit('error', error)
+		}
+	}
+
+	use(handler) {
+		this._filters.push(handler)
+	}
+
+	consume(chunk, encoding) {
+		let index = -1
+		const _consume = (chunk, encoding) => {
+			if(++index < this._filters.length) {
+				return this._filters[index](chunk, encoding, _consume)
+			}
+
+			this.emit('data', chunk)
+			return 0
+		}
+
+		return _consume(chunk, encoding)
+	}
+}
 
 class Bus extends stream.Duplex {
 	constructor() {
 		super()
 
-		this._handlers = []
+		this._routes = []
 	}
 
 	_resolve(frame) {
@@ -18,53 +54,40 @@ class Bus extends stream.Duplex {
 		// }
 	}
 
-	_write(chunk, encoding, cb) {
-		for (let index = 0; index < this._handlers.length;) {
-			const handler = this._handlers[index]
-			const consumed = handler.consume(chunk, handler.options, handler.callback)
-			let splice = true
+	async _write(chunk, encoding, cb) {
+		for (let index = 0; chunk.length && index < this._routes.length;) {
+			const [id, route] = this._routes[index]
+			let consumed = 0
 
-			if (!consumed) {
-				splice = false
+			try {
+				consumed = await route.consume(chunk, encoding)
+			} catch(error) {
+				this.emit('error', error)
 			}
-
-			if (splice && handler.options.once) {
-				this._handlers.splice(index, 1)
+			
+			if(consumed) {
+				chunk = chunk.slice(consumed)
+				index = 0
 			} else {
 				index++
 			}
 		}
 
-		process.nextTick(cb)
+		cb()
 	}
 
-	subscribe(consume, options, callback) {
-		const w = {
-			consume: consume.bind(this),
-			options,
-			callback: callback.bind(this)
+	route(id, ...filters) {
+		const route = new Route()
+		
+		for(let filter of filters) {
+			route.use(filter)
 		}
 
-		this._handlers.push(w)
+		this._routes.push([id, route])
 
-		return w
-	}
-
-	unsubscribe(watcher) {
-		const index = this._handlers.indexOf(watcher)
-
-		if (~index) {
-			this._handlers.splice(index, 1)
-			return true
-		}
-
-		return false
-	}
-
-	reset() {
-		this._handlers.splice(0, this._handlers.length)
-		return this
+		return route
 	}
 }
 
+export { Route }
 export default Bus

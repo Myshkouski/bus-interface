@@ -1,13 +1,13 @@
 {
 	"devDependencies": {
-		"@types/node": "^10.12.17",
 		"buffer-concat": "^1.0.0",
 		"buffer-from": "^1.1.1"
 	},
-	"main": "bus.mjs",
+	"module": "bus.mjs",
 	"name": "@alexeimyshkouski/bus-interface",
 	"scripts": {
-		"test": "node --experimental-modules test"
+		"test": "node --experimental-modules test.mjs"
 	},
-	"version": "0.0.2"
+	"type": "module",
+	"version": "0.0.3"
 }
