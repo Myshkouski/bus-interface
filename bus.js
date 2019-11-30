@@ -9,7 +9,7 @@ function Route() {
 		read() {},
 		async write(chunk, encoding, cb) {
 			try {
-				await this.consume(chunk, encoding, cb);
+				this.consume(chunk, encoding, cb);
 			} catch (error) {
 				this.emit('error', error);
 			}
@@ -47,13 +47,13 @@ Object.assign(Route.prototype, {
 function Bus() {
 	stream.Duplex.call(this, {
 		read() {},
-		async write(chunk, encoding, cb) {
+		write(chunk, encoding, cb) {
 			for (let index = 0; chunk.length && index < this._routes.length;) {
 				const [id, route] = this._routes[index];
 				let consumed = 0;
 
 				try {
-					consumed = await route.consume(chunk, encoding);
+					consumed = route.consume(chunk, encoding);
 				} catch (error) {
 					this.emit('error', error);
 				}
